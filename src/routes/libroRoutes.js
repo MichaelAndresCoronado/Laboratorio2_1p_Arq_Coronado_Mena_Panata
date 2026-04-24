@@ -1,22 +1,58 @@
-const express = require('express');         //instancia del servidor express
-const router = express.Router();            //nueva instancia del enrutador.
+const express = require('express');
+const router = express.Router();
 
-//importamos el controlador de libros para manejar las rutas relacionadas con libros.
+// INPUT FILTERS 
+const { validarLibro } = require('../filters/input/libro.input');
+const { validarId } = require('../filters/input/common.input');
+
+// 👇 OUTPUT FILTER 
+const { successResponse } = require('../filters/output/response.output');
+
+// 👇 PROCESSING (Integrante 3)
 const {
     getAllLibros,
     createLibro,
     getLibroById,
     updateLibro,
-    deleteLibro 
-} = require('../controllers/libroController'); 
+    deleteLibro
+} = require('../filters/processing/libro.processing');
 
-//rutas para la gestion de libros
-router.get('/', getAllLibros);
-router.post('/', createLibro);
-router.get('/:id', getLibroById);
-router.put('/:id', updateLibro);
-router.delete('/:id', deleteLibro);
+// ==========================
+//  TUBERÍAS
+
+// Obtener todos los libros
+router.get('/',
+    getAllLibros,
+    successResponse
+);
+
+// Crear libro
+router.post('/',
+    validarLibro,
+    createLibro,
+    successResponse
+);
+
+// Obtener libro por ID
+router.get('/:id',
+    validarId,
+    getLibroById,
+    successResponse
+);
+
+// Actualizar libro
+router.put('/:id',
+    validarId,
+    validarLibro,
+    updateLibro,
+    successResponse
+);
+
+// Eliminar libro
+router.delete('/:id',
+    validarId,
+    deleteLibro,
+    successResponse
+);
 
 module.exports = router;
-
-// redireciona a las rutas de mi aplicacion.

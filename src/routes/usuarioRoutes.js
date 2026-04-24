@@ -1,11 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const { getPrestamosByUser, createUsuario } = require('../controllers/usuarioController');
 
-// Ruta genérica para registrar usuarios (lectores, bibliotecarios)
-router.post('/', createUsuario);
+// INPUT FILTERS (TU PARTE)
+const { validarUsuario } = require('../filters/input/usuario.input');
+const { validarId } = require('../filters/input/common.input');
 
-// Ruta: GET /api/usuarios/:id/prestamos
-router.get('/:id/prestamos', getPrestamosByUser);
+// OUTPUT FILTER
+const { successResponse } = require('../filters/output/response.output');
+
+// PROCESSING 
+const {
+    createUsuario,
+    getPrestamosByUser
+} = require('../filters/processing/usuario.processing');
+
+// ==========================
+// TUBERÍAS
+
+// Crear usuario
+router.post('/',
+    validarUsuario,
+    createUsuario,
+    successResponse
+);
+
+// Obtener préstamos por usuario
+router.get('/:id/prestamos',
+    validarId,
+    getPrestamosByUser,
+    successResponse
+);
 
 module.exports = router;

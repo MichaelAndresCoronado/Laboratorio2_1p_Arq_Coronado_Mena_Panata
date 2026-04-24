@@ -1,24 +1,62 @@
 const express = require('express');
 const router = express.Router();
 
+// INPUT FILTERS 
+const { validarAutor } = require('../filters/input/autor.input');
+const { validarId } = require('../filters/input/common.input');
+
+//  OUTPUT FILTER 
+const { successResponse } = require('../filters/output/response.output');
+
+//  PROCESSING (Integrante 3 )
 const {
     getAllAutores,
     createAutor,
     getAutorById,
     updateAutor,
     deleteAutor,
-    searchAutores // <-- Importamos la nueva función
-} = require('../controllers/autorController'); 
+    searchAutores
+} = require('../filters/processing/autor.processing');
 
-// Rutas para la gestión de autores
-router.get('/', getAllAutores);
-router.post('/', createAutor);
+// Obtener todos
+router.get('/',
+    getAllAutores,
+    successResponse
+);
 
-// ATENCIÓN: La ruta estática '/buscar' DEBE ir antes de la dinámica '/:id'
-router.get('/buscar', searchAutores); 
+// Crear autor
+router.post('/',
+    validarAutor,
+    createAutor,
+    successResponse
+);
 
-router.get('/:id', getAutorById); // Restaurado a su estado correcto
-router.put('/:id', updateAutor);
-router.delete('/:id', deleteAutor);
+// Buscar autores
+router.get('/buscar',
+    searchAutores,
+    successResponse
+);
+
+// Obtener por ID
+router.get('/:id',
+    validarId,
+    getAutorById,
+    successResponse
+);
+
+// Actualizar
+router.put('/:id',
+    validarId,
+    validarAutor,
+    updateAutor,
+    successResponse
+);
+
+// Eliminar
+router.delete('/:id',
+    validarId,
+    deleteAutor,
+    successResponse
+);
 
 module.exports = router;
